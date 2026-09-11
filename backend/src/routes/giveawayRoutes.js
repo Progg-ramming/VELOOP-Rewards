@@ -1,0 +1,21 @@
+import { Router } from 'express';
+import { getCurrentGiveaway, getGiveaway, getPreviousGiveaways } from '../controllers/giveawayController.js';
+import { getMyStatus, join } from '../controllers/participationController.js';
+import { getWinners } from '../controllers/winnerController.js';
+import { getMyClaim, submitClaim } from '../controllers/claimController.js';
+import { requireAuth } from '../middleware/authMiddleware.js';
+import { joinRateLimit } from '../middleware/rateLimitMiddleware.js';
+import { validate } from '../middleware/validationMiddleware.js';
+import { giveawayIdValidator } from '../validators/giveawayValidators.js';
+import { claimValidator } from '../validators/claimValidators.js';
+
+const router = Router();
+router.get('/current', getCurrentGiveaway);
+router.get('/previous', getPreviousGiveaways);
+router.get('/:id/winners', giveawayIdValidator, validate, getWinners);
+router.get('/:id/my-status', requireAuth, giveawayIdValidator, validate, getMyStatus);
+router.post('/:id/join', requireAuth, joinRateLimit, giveawayIdValidator, validate, join);
+router.post('/:id/claim', requireAuth, giveawayIdValidator, claimValidator, validate, submitClaim);
+router.get('/:id/my-claim', requireAuth, giveawayIdValidator, validate, getMyClaim);
+router.get('/:id', giveawayIdValidator, validate, getGiveaway);
+export default router;

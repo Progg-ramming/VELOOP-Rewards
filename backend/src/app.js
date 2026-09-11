@@ -1,0 +1,25 @@
+import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import pinoHttp from 'pino-http';
+import { randomUUID } from 'node:crypto';
+import { env } from './config/env.js';
+import giveawayRoutes from './routes/giveawayRoutes.js';
+import winnerRoutes from './routes/winnerRoutes.js';
+import adminGiveawayRoutes from './routes/adminGiveawayRoutes.js';
+import { apiRateLimit } from './middleware/rateLimitMiddleware.js';
+import { errorHandler, notFound } from './middleware/errorMiddleware.js';
+
+export const app = express();
+app.disable('x-powered-by');
+app.use(helmet());
+app.use(cors({ origin: env.corsOrigin, credentials: true }));
+app.use(express.json({ limit: '20kb' }));
+app.use(pinoHttp({ genReqId: () => randomUUID() }));
+app.use(apiRateLimit);
+app.get('/health', (request, response) => response.json({ status: 'ok', service: 'veloop-rewards-backend' }));
+app.use('/api/giveaways', giveawayRoutes);
+app.use('/api', winnerRoutes);
+app.use('/api/admin/giveaways', adminGiveawayRoutes);
+app.use(notFound);
+app.use(errorHandler);
