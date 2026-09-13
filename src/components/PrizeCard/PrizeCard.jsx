@@ -1,4 +1,5 @@
 import { ArrowRight, Clock3, UserRound } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import Countdown from '../Countdown/Countdown';
 import styles from '../../App.module.css';
 
@@ -8,6 +9,6 @@ export default function PrizeCard({ prize, endDate }) {
     <div className={styles.prizeImageWrap}><img src={encodeURI(`/assets/${prize.image}`)} alt={prize.name} loading="lazy" /></div>
     <div className={styles.prizeCopy}><h3>{prize.name}</h3><p>{prize.description}</p></div>
     <div className={styles.prizeMeta}><span><UserRound size={14} /> {prize.participants}</span><span><Clock3 size={14} /> <Countdown endDate={endDate} compact /></span></div>
-    <a className={styles.cardAction} href={`/giveaway/${prize.slug}`}>View giveaway <ArrowRight size={15} /></a>
+    <Link className={styles.cardAction} to={`/giveaway/${prize.slug}`}>View giveaway <ArrowRight size={15} /></Link>
   </article>;
 }
